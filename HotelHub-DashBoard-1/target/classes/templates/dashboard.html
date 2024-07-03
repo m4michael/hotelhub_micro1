@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <div>
+        <h1>Dashboard</h1>
+
+        <h2>Users</h2>
+        <ol>
+            <li th:each="user : ${users}">
+                <strong>Name:</strong> <span th:text="${user.name}" style="color: green;"></span><br>
+                <strong>Email:</strong> <span th:text="${user.email}"></span><br>
+                <strong>About:</strong> <span th:text="${user.about}"></span>
+
+                <h3>Ratings</h3>
+                <ol>
+                    <li th:each="rating : ${ratings}" th:if="${rating.userId == user.userId}">
+                        <strong>Rating:</strong> <span th:text="${rating.rating}"></span><br>
+                        <strong>Feedback:</strong> <span th:text="${rating.feedback}"></span>
+
+                        <ul>
+                            <li th:each="hotel : ${hotels}" th:if="${rating.hotelId == hotel.id}">
+                                <strong>Hotel:</strong> <span th:text="${hotel.name}"></span><br>
+                                <strong>Location:</strong> <span th:text="${hotel.location}"></span><br>
+                                <strong>About:</strong> <span th:text="${hotel.about}"></span>
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <!-- Separator line -->
+                <hr style="border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 20px;">
+            </li>
+        </ol>
+    </div>
+</body>
+</html>
