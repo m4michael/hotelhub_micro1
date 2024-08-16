@@ -3,7 +3,7 @@
 # - The yaml file had comments which are lost in the refactoring!
 spring:
   application:
-    name: USER_SERVICE1
+    name: USERSERVICE
   
   datasource:
     url: jdbc:mysql://localhost:3306/microservice1
@@ -19,10 +19,63 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         
-  config:
-    import: configserver:http://localhost:8086
+##  config:
+##    import: configserver:http://localhost:8086
     
         
         
 server:
   port: 8080
+  
+#Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, circuitbreakers  # Exposes the health and circuitbreakers endpoints over the web
+  
+  endpoint:
+    health:
+      show-details: always  # Always show detailed health information
+    circuitbreakers:
+      show-details: always  # Always show detailed circuit breaker information
+
+
+#resilience
+resilience4j:
+  circuitbreaker:
+    instances:
+      Breaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 6s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+        
+  retry:
+    instances:
+      Retry:
+        max-attempts: 3
+        wait-duration: 5s
+        
+  ratelimiter:                    #will test this in jmeter
+    instances:
+      Limiter:
+        limit-refresh-period: 4s  #creating 4 sec window
+        limit-for-period: 4       #only 4 request will be processed in refresh period
+        timeout-duration: 10s     #code will run for 10 seconds 
+        
+                 
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8083/eureka
+  

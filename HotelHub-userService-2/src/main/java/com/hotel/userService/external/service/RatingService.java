@@ -1,5 +1,8 @@
 package com.hotel.userService.external.service;
 
+
+/*
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,3 +17,5 @@ public interface RatingService {
 	Rating[] getRating(@PathVariable String userId);
 
 }
+
+*/

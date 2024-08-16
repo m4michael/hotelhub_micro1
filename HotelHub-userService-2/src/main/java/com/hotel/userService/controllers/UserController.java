@@ -2,6 +2,8 @@ package com.hotel.userService.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hotel.userService.entities.User1;
 import com.hotel.userService.services.UserService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
+
 
 @RestController
 @RequestMapping("/users")
@@ -22,6 +28,8 @@ public class UserController {
 	
 	@Autowired
 	private UserService userServ;
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
 	//create
 	
@@ -36,16 +44,40 @@ public class UserController {
 	}
 	
 
-	
+	int retryCount=1;
 	//single user
 	
 	@GetMapping("/{userId}")
+	//@Retry(name="Retry",fallbackMethod="ratingHotelFallBack")
+	//@CircuitBreaker(name="Breaker",fallbackMethod = "ratingHotelFallBack")
+	@RateLimiter(name="Limiter",fallbackMethod = "ratingHotelFallBack")
 	public ResponseEntity<User1> getSingleUser(@PathVariable String userId){
+		
+		logger.info("Get single User Handler:UserController");
+		logger.info("Retry count:{}",retryCount);
+		
+		retryCount++;
 		
 		User1 user = userServ.getUser(userId);
 		
 		return ResponseEntity.ok(user);
 		
+	}
+	
+	//creating fall back method for circuitbreaker
+	
+	public ResponseEntity<User1> ratingHotelFallBack(String userId,Exception ex){
+		
+		
+		logger.info("Fallback is executed because service is down: ", ex.getMessage());
+		
+		User1 user1=User1.builder()
+		.email("dummy@gmail.com")
+		.name("Dummy")
+		.about("This is Dummy user because some service is down")
+		.build();
+		
+		return new ResponseEntity<>(user1,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	

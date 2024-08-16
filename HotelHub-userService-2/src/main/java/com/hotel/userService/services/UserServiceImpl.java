@@ -1,6 +1,5 @@
 package com.hotel.userService.services;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -18,8 +17,10 @@ import com.hotel.userService.entities.Hotel;
 import com.hotel.userService.entities.Rating;
 import com.hotel.userService.entities.User1;
 import com.hotel.userService.exceptions.ResourceNotFoundException;
-import com.hotel.userService.external.service.HotelService;
-import com.hotel.userService.external.service.RatingService;
+
+//import com.hotel.userService.external.service.HotelService;
+//import com.hotel.userService.external.service.RatingService;
+
 import com.hotel.userService.repository.UserRepository;
 
 @Service
@@ -33,11 +34,11 @@ public class UserServiceImpl implements UserService {
 	
 	private Logger logger=LoggerFactory.getLogger(UserServiceImpl.class);
 	
-	@Autowired
+/*	@Autowired
 	private HotelService hotelServ;//feign client
 	
 	@Autowired
-	private RatingService ratingServ;//feign client
+	private RatingService ratingServ;//feign client  */
 
 	@Override
 	public User1 saveUser(User1 user) {
@@ -74,10 +75,10 @@ public class UserServiceImpl implements UserService {
 		
 		//ArrayList<Rating> ratingOfUser = restTemp.getForObject("http://localhost:8082/ratings/users/"+user1.getUserId(), ArrayList.class);
 		
-		//Rating[] ratingsArray = restTemp.getForObject("http://RATINGSERVICE-1/ratings/users/" + user1.getUserId(), Rating[].class);
+		Rating[] ratingsArray = restTemp.getForObject("http://RATINGSERVICE-1/ratings/users/" + user1.getUserId(), Rating[].class);
 		
-		Rating[] ratingsArray=ratingServ.getRating(user1.getUserId());
-		logger.info("using feign for getting Rating");
+	/*	Rating[] ratingsArray=ratingServ.getRating(user1.getUserId());
+		logger.info("using feign for getting Rating");   */
 		
 		List<Rating> ratingOfUser = Arrays.asList(ratingsArray);
 
@@ -89,13 +90,13 @@ public class UserServiceImpl implements UserService {
 			
 			//http://localhost:8081/hotels/HID40
 			
-	    /* ResponseEntity<Hotel> forEntity=restTemp.getForEntity("http://HOTELSERVICE/hotels/"+rating.getHotelId(),Hotel.class );
+	     ResponseEntity<Hotel> forEntity=restTemp.getForEntity("http://HOTELSERVICE/hotels/"+rating.getHotelId(),Hotel.class );
 			Hotel hotel=forEntity.getBody();
-			logger.info("response Status Code:{}",forEntity.getStatusCode());*/
+			logger.info("response Status Code:{}",forEntity.getStatusCode());
 			
 			
-			Hotel hotel=hotelServ.getHotel(rating.getHotelId()); 
-			logger.info("USing FeignClient for hotelService");
+		/*	Hotel hotel=hotelServ.getHotel(rating.getHotelId()); 
+			logger.info("USing FeignClient for hotelService");  */
 			rating.setHotel(hotel);
 			
 			return rating;
