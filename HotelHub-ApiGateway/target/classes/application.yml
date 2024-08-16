@@ -5,17 +5,30 @@ spring:
     gateway:
       routes:
         - id: USERSERVICE
-          uri: lb://HOTELHUB-USERSERVICE-2
+          uri: lb://USERSERVICE
           predicates:
             - Path=/users/**
+          filters :
+            - AuthenticationFilter
+             
         - id: HOTELSERVICE
           uri: lb://HOTELSERVICE
           predicates:
             - Path=/hotels/**
+          filters:
+            - AuthenticationFilter
+              
         - id: RATINGSERVICE1
           uri: lb://RATINGSERVICE-1
           predicates:
             - Path=/ratings/**
+          filters:
+            - AuthenticationFilter
+              
+        - id: SECURITY
+          uri: lb://SECURITY
+          predicates:
+            - Path=/auth/**     
 
 server:
   port: 8085
