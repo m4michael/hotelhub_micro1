@@ -23,9 +23,6 @@ public class GlobalExceptionHandler {
 	}
 	
 
-	//ApiResponse is response body
-	//if we returning Response Entity with new operator then
-	//while returning ResponseEntity it is must to send status in argument, response body is optional.
-	//first argument is body ,2nd argument is status.
+	
 	
 }
